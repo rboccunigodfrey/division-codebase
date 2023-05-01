@@ -100,8 +100,6 @@ public class FretHandController : MonoBehaviour
 
         SolenoidController[] solenoids = {solenoid1, solenoid2, solenoid3, solenoid4, solenoid5, solenoid6};
 
-        
-
         allSolenoidsRetracted = true;
         allSolenoidsStationary = true;
         foreach (SolenoidController solenoid in solenoids) 
@@ -162,7 +160,7 @@ public class FretHandController : MonoBehaviour
             int row = i / 2;
             int col = i % 2;
             // set the current position matrix value to the integer of the current solenoid's encoded xtilt, ztilt, and trackposition as 100ths, 10ths, and 1's place, respectively
-            positionMatrix[row, col] = solenoids[i].GetEncodedTiltX()*100 + solenoids[i].GetEncodedTiltZ()*10 + solenoids[i].GetEncodedTrackDistance();
+            positionMatrix[row, col] = solenoids[i].GetEncodedTiltX()*100 + solenoids[i].GetEncodedTiltZ()*10 + solenoids[i].GetTrackPosition();
         }
         return positionMatrix;
     }

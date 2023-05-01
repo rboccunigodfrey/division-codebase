@@ -197,17 +197,7 @@ public class SolenoidController : MonoBehaviour
 
     public int GetTrackPosition()
     {
-        // get the index of the fret hand position in the fretLengths array
-        int fretHandPositionIndex = 0;
-        for (int i = 0; i < fretLengths.Length; i++)
-        {
-            if (fretHandPosition == fretLengths[i])
-            {
-                fretHandPositionIndex = i;
-                break;
-            }
-        }
-        return 0;
+        return trackPosition;
     }
 
     public void SetTrackPosition(int position)
