@@ -11,13 +11,15 @@ public class FretHandController : MonoBehaviour
     public SolenoidController solenoid5;
     public SolenoidController solenoid6;
 
-    public float travelSpeed = 40.0f;
+    public float travelSpeed = 20.0f;
     public float trackDistance = 5.0f;
+    public int trackPosition;
 
     public float solenoidReverseRowOffset = 1.75f/2;
-    public float solenoidTiltSpeed = 100.0f; // The speed at which the core moves
-    public float solenoidCoreSpeed = 100.0f;
+    public float solenoidTiltSpeed = 20.0f; // The speed at which the core moves
+    public float solenoidCoreSpeed = 20.0f;
     public float solenoidTrackLength = 5.0f;
+    public float solenoidTrackReverseLength = 5.0f;
     public float solenoidMaxTiltX = 10f;
     public float solenoidMaxTiltZ = 10f;
     public float solenoidXSpacing = 1.75f;
@@ -28,6 +30,34 @@ public class FretHandController : MonoBehaviour
     [SerializeField] private bool isStationary;
     [SerializeField] private bool allSolenoidsStationary;
     [SerializeField] private bool allSolenoidsRetracted;
+    [SerializeField] private float[,] currentPositionMatrix;
+
+    private float[] fretLengths = new float[23] 
+    {
+        0f,
+        37.941f/486.304f,
+        73.752f/486.304f,
+        107.554f/486.304f,
+        139.458f/486.304f,
+        169.572f/486.304f,
+        197.996f/486.304f,
+        224.824f/486.304f,
+        250.147f/486.304f,
+        274.048f/486.304f,
+        296.608f/486.304f,
+        317.901f/486.304f,
+        338.000f/486.304f,
+        356.970f/486.304f,
+        374.876f/486.304f,
+        391.777f/486.304f,
+        407.729f/486.304f,
+        422.786f/486.304f,
+        436.998f/486.304f,
+        450.412f/486.304f,
+        463.073f/486.304f,
+        475.024f/486.304f,
+        486.304f/486.304f
+    };
 
     
     // Start is called before the first frame update
@@ -66,18 +96,30 @@ public class FretHandController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Update current position matrix
+
         SolenoidController[] solenoids = {solenoid1, solenoid2, solenoid3, solenoid4, solenoid5, solenoid6};
 
+        
 
         allSolenoidsRetracted = true;
         allSolenoidsStationary = true;
         foreach (SolenoidController solenoid in solenoids) 
         {
+            solenoid.UpdateHandPosition(trackPosition);
+            solenoid.UpdateFretTrackLength(trackLength);
             solenoid.SetTiltSpeed(solenoidTiltSpeed);
             solenoid.SetMaxTiltX(solenoidMaxTiltX);
             solenoid.SetMaxTiltZ(solenoidMaxTiltZ);
             solenoid.SetCoreSpeed(solenoidCoreSpeed);
-            solenoid.SetTrackLength(solenoidTrackLength);
+            if (solenoid.reverse)
+            {
+                solenoid.SetTrackLength(solenoidTrackReverseLength);
+            }
+            else 
+            {
+                solenoid.SetTrackLength(solenoidTrackLength);
+            }
             solenoid.SetSolenoidZSpacing(solenoidZSpacing);
             if (solenoid.isActive) 
             {
@@ -90,6 +132,7 @@ public class FretHandController : MonoBehaviour
         }
 
         trackDistance = Mathf.Round(Mathf.Clamp(trackDistance, 0, trackLength) * 1000f) * 0.001f;
+        
         if (allSolenoidsRetracted)
         {
             float newZ = Mathf.Lerp(transform.localPosition.z, trackDistance, Time.deltaTime * travelSpeed);
@@ -99,8 +142,48 @@ public class FretHandController : MonoBehaviour
         rawTrackDistance = Mathf.Round(transform.localPosition.z * 1000f) * 0.001f;
         isStationary = Mathf.Abs(Mathf.Abs(trackDistance) - Mathf.Abs(rawTrackDistance)) < 0.05f;
         if (!allSolenoidsRetracted) {isStationary = true;}
+        if (isStationary) {
+            currentPositionMatrix = GetCurrentPositionMatrix();
+            trackPosition = GetTrackPosition();
+        }
+
+        // calculate solenoid track length that varies with track position
+        solenoidTrackLength = (fretLengths[trackPosition+3] - fretLengths[trackPosition]) * trackLength;
+        solenoidTrackReverseLength = (fretLengths[trackPosition] - fretLengths[trackPosition-3]) * trackLength;
     }
 
+    public float[,] GetCurrentPositionMatrix()
+    {
+        float[,] positionMatrix = new float[3,2];
+        SolenoidController[] solenoids = {solenoid1, solenoid2, solenoid3, solenoid4, solenoid5, solenoid6};
+        // iterate through all 6 solenoids, and map their current position representation to the 3x2 matrix
+        for (int i = 0; i < solenoids.Length; i++)
+        {
+            int row = i / 2;
+            int col = i % 2;
+            // set the current position matrix value to the integer of the current solenoid's encoded xtilt, ztilt, and trackposition as 100ths, 10ths, and 1's place, respectively
+            positionMatrix[row, col] = solenoids[i].GetEncodedTiltX()*100 + solenoids[i].GetEncodedTiltZ()*10 + solenoids[i].GetEncodedTrackDistance();
+        }
+        return positionMatrix;
+    }
+
+    public int GetTrackPosition(float distance = -1f)
+    {
+        if (distance == -1f) {distance = rawTrackDistance;}
+        for (int i = 0; i < fretLengths.Length; i++)
+        {
+            if ((distance - fretLengths[i] * trackLength) < 0.1f)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void SetTrackPosition(int position) {
+        SetTrackDistance(fretLengths[position] * trackLength);
+    }
+ 
     public void SetTravelSpeed(float speed)
     {
 
@@ -139,5 +222,9 @@ public class FretHandController : MonoBehaviour
     public void SetSolenoidTrackLength(float length)
     {
         solenoidTrackLength = length;
+    }
+    public void SetSolenoidTrackReverseLength(float length)
+    {
+        solenoidTrackReverseLength = length;
     }
 }

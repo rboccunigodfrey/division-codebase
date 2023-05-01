@@ -11,6 +11,9 @@ public class SolenoidController : MonoBehaviour
     public float tiltAngleZ = 0.0f; // The angle at which the solenoid is tilted
     public float trackDistance = 0.0f;
     
+    [SerializeField] private int fretHandPosition;
+    [SerializeField] private int trackPosition;
+    [SerializeField] private float fretTrackLength;
     [SerializeField] private float tiltSpeed = 100.0f; // The speed at which the core moves
     [SerializeField] private float maxTiltX = 10f;
     [SerializeField] private float maxTiltZ = 10f;
@@ -23,6 +26,32 @@ public class SolenoidController : MonoBehaviour
     [SerializeField] private bool isStationary;
     [SerializeField] private float solenoidZSpacing = 1.75f;
     private float coreStartY;
+    private float[] fretLengths = new float[23] 
+    {
+        0f,
+        37.941f/486.304f,
+        73.752f/486.304f,
+        107.554f/486.304f,
+        139.458f/486.304f,
+        169.572f/486.304f,
+        197.996f/486.304f,
+        224.824f/486.304f,
+        250.147f/486.304f,
+        274.048f/486.304f,
+        296.608f/486.304f,
+        317.901f/486.304f,
+        338.000f/486.304f,
+        356.970f/486.304f,
+        374.876f/486.304f,
+        391.777f/486.304f,
+        407.729f/486.304f,
+        422.786f/486.304f,
+        436.998f/486.304f,
+        450.412f/486.304f,
+        463.073f/486.304f,
+        475.024f/486.304f,
+        486.304f/486.304f
+    };
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +69,8 @@ public class SolenoidController : MonoBehaviour
         // Apply tilt angle to solenoid transform
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(tiltAngleX, 0f, tiltAngleZ), Time.deltaTime * tiltSpeed);
         
+        //trackPosition = GetTrackPosition();
+
         // Apply position change to solenoid (along track)
         // adjust for reverse position:
         float adjust = System.Convert.ToInt32(reverse) * solenoidZSpacing;
@@ -57,14 +88,14 @@ public class SolenoidController : MonoBehaviour
         {
             rawTiltX = rawTiltX - 360f;
         }
-        rawTiltX = Mathf.Round(rawTiltX * 10f) * 0.1f;
+        rawTiltX = Mathf.Round(rawTiltX * 1000f) * 0.001f;
 
         rawTiltZ = transform.rotation.eulerAngles.z;
         if (rawTiltZ > 340f)
         {
             rawTiltZ = rawTiltZ - 360f;
         }
-        rawTiltZ = Mathf.Round(rawTiltZ * 10f) * 0.1f;
+        rawTiltZ = Mathf.Round(rawTiltZ * 1000f) * 0.001f;
         rawTrackDistance = Mathf.Round((transform.localPosition.z + adjust) * 1000f) * 0.001f;
 
         isStationary = Mathf.Abs(Mathf.Abs(rawTrackDistance) - Mathf.Abs(trackDistance)) < 0.05f && Mathf.Abs(rawTiltX - tiltAngleX) <= 0.1f && Mathf.Abs(rawTiltZ - tiltAngleZ) <= 0.1f;
@@ -73,12 +104,12 @@ public class SolenoidController : MonoBehaviour
         // Apply position change to core
 
         float yGoal = coreStartY;
-        if (isActive && isStationary) {yGoal = -0.6f;}
+        if (isActive && isStationary) {yGoal = -0.4f;}
         float newY = Mathf.Lerp(core.transform.localPosition.y, yGoal, Time.deltaTime * coreSpeed);
         core.transform.localPosition = new Vector3(core.transform.localPosition.x, newY, core.transform.localPosition.z);
 
     
-        rawCoreDepth = Mathf.Round(core.transform.localPosition.y * 10f) * 0.1f;
+        rawCoreDepth = Mathf.Round(core.transform.localPosition.y * 1000f) * 0.001f;
         
 
         // update colors
@@ -93,9 +124,17 @@ public class SolenoidController : MonoBehaviour
         }
     }
 
-    public void SetActive(bool active)
+        public void SetActive(bool a)
     {
-        isActive = active;
+        isActive = a;
+    }
+    public void UpdateHandPosition(int position)
+    {
+        fretHandPosition = position;
+    }
+    public void UpdateFretTrackLength(float length)
+    {
+        fretTrackLength = length;
     }
     public void SetTiltSpeed(float speed)
     {
@@ -138,6 +177,44 @@ public class SolenoidController : MonoBehaviour
     public float GetTrackLength()
     {
         return trackLength;
+    }
+
+    public int GetEncodedTiltX()
+    {
+        return System.Convert.ToInt32(tiltAngleX / maxTiltX) + 2;
+    }
+
+    public int GetEncodedTiltZ()
+    {
+        return System.Convert.ToInt32(tiltAngleZ / maxTiltZ) + 2;
+    }
+
+    public int GetEncodedTrackDistance()
+    {
+        // return an integer between 0 and 9 quantifying the track distance in terms of track length
+        return System.Convert.ToInt32(trackDistance / trackLength * 10f);
+    }
+
+    public int GetTrackPosition()
+    {
+        // get the index of the fret hand position in the fretLengths array
+        int fretHandPositionIndex = 0;
+        for (int i = 0; i < fretLengths.Length; i++)
+        {
+            if (fretHandPosition == fretLengths[i])
+            {
+                fretHandPositionIndex = i;
+                break;
+            }
+        }
+        return 0;
+    }
+
+    public void SetTrackPosition(int position)
+    {
+        trackPosition = position;
+        if (reverse) {position = position * -1;}
+        SetTrackDistance(fretLengths[fretHandPosition + position] * fretTrackLength);
     }
 
     public bool IsStationary()

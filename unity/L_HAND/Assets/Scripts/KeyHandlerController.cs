@@ -10,7 +10,8 @@ public class KeyHandlerController : MonoBehaviour
     void Update()
     {
         SolenoidController[] solenoids = {solenoid1};
-        foreach (SolenoidController solenoid in solenoids) {
+        foreach (SolenoidController solenoid in solenoids) 
+        {
             if (Input.GetKey(KeyCode.UpArrow))
             {
                 if (Input.GetKey(KeyCode.DownArrow)) 

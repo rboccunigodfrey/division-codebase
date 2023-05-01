@@ -21,9 +21,10 @@ public class RandomizerController : MonoBehaviour
 
     IEnumerator fretHandRandomizer(SolenoidController[] solenoids)
     {   
+        int position = 3;
         while (true) 
         {
-            fretHand.SetTrackDistance(Random.Range(0f, fretHand.GetTrackLength()));
+            fretHand.SetTrackPosition(position);
             List<SolenoidController> chosenSolenoids = new List<SolenoidController>();
 
             while (chosenSolenoids.Count < 4)
@@ -48,7 +49,6 @@ public class RandomizerController : MonoBehaviour
                     {
                         newTiltAngleX = Random.Range(-1, 2)*10f;
                         newTiltAngleZ = Random.Range(-1, 2)*10f;
-                        newTrackDistance = Random.Range(0f, solenoid.GetTrackLength());
                     } 
                     else 
                     {
@@ -57,19 +57,27 @@ public class RandomizerController : MonoBehaviour
                         newTrackDistance = 0f;
                     }
 
-                    solenoid.SetActive(newActiveState);
-                    solenoid.SetTiltAngleX(newTiltAngleX);
+                    solenoid.SetActive(Random.value < 0.4f);
+                    //solenoid.SetTiltAngleX(newTiltAngleX);
                     solenoid.SetTiltAngleZ(newTiltAngleZ);
-                    solenoid.SetTrackDistance(newTrackDistance);
+                    solenoid.SetTrackPosition(Random.Range(0, 4));
                 }
             }
-            yield return new WaitForSeconds(Random.Range(1, 4)*0.25f);
+            yield return new WaitForSeconds(1);
             foreach (SolenoidController solenoid in solenoids)
             {
                 solenoid.SetActive(false);
                 solenoid.SetTiltAngleX(0f);
                 solenoid.SetTiltAngleZ(0f);
             }
+            position ++;
+            if (position > 19) {position = 3;}
         }
     }
+    /*
+    IEnumerator fretHandLearner(SolenoidController[] solenoids)
+    {
+
+    }
+    */
 }

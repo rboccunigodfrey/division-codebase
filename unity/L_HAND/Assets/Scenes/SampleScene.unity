@@ -335,20 +335,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   core: {fileID: 902490347}
   reverse: 1
-  tiltSpeed: 20
-  coreSpeed: 20
   isActive: 0
   tiltAngleX: 0
   tiltAngleZ: 0
   trackDistance: 0
+  fretHandPosition: 0
+  trackPosition: 0
+  fretTrackLength: 0
+  tiltSpeed: 20
   maxTiltX: 10
   maxTiltZ: 10
+  coreSpeed: 20
   trackLength: 5
   rawTiltX: 0
   rawTiltZ: 0
   rawCoreDepth: 0
   rawTrackDistance: 0
   isStationary: 0
+  solenoidZSpacing: 1.75
 --- !u!4 &258946979
 Transform:
   m_ObjectHideFlags: 0
@@ -546,20 +550,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   core: {fileID: 1495317057}
   reverse: 0
-  tiltSpeed: 20
-  coreSpeed: 20
   isActive: 0
   tiltAngleX: 0
   tiltAngleZ: 0
   trackDistance: 0
+  fretHandPosition: 0
+  trackPosition: 0
+  fretTrackLength: 0
+  tiltSpeed: 20
   maxTiltX: 10
   maxTiltZ: 10
+  coreSpeed: 20
   trackLength: 5
   rawTiltX: 0
   rawTiltZ: 0
   rawCoreDepth: 0
   rawTrackDistance: 0
   isStationary: 0
+  solenoidZSpacing: 1.75
 --- !u!4 &496300392
 Transform:
   m_ObjectHideFlags: 0
@@ -1057,7 +1065,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.5, y: -0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 2.87, y: 20.95, z: 15.95}
+  m_LocalPosition: {x: 1.11, y: 42.96, z: 17.52}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1183,14 +1191,23 @@ MonoBehaviour:
   solenoid4: {fileID: 496300391}
   solenoid5: {fileID: 1248972846}
   solenoid6: {fileID: 1554708314}
-  travelSpeed: 40
-  trackDistance: 5
+  travelSpeed: 20
+  trackDistance: 14.66
+  trackPosition: 0
+  solenoidReverseRowOffset: 0.875
+  solenoidTiltSpeed: 20
+  solenoidCoreSpeed: 20
+  solenoidTrackLength: 5
+  solenoidTrackReverseLength: 5
+  solenoidMaxTiltX: 10
+  solenoidMaxTiltZ: 10
   solenoidXSpacing: 1.75
   solenoidZSpacing: 1.75
-  solenoidReverseRowOffset: 0.875
-  trackLength: 20
+  trackLength: 40
   rawTrackDistance: 0
   isStationary: 0
+  allSolenoidsStationary: 0
+  allSolenoidsRetracted: 0
 --- !u!4 &1076108182
 Transform:
   m_ObjectHideFlags: 0
@@ -1341,20 +1358,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   core: {fileID: 892027417}
   reverse: 1
-  tiltSpeed: 20
-  coreSpeed: 20
   isActive: 0
   tiltAngleX: 0
   tiltAngleZ: 0
   trackDistance: 0
+  fretHandPosition: 0
+  trackPosition: 0
+  fretTrackLength: 0
+  tiltSpeed: 20
   maxTiltX: 10
   maxTiltZ: 10
+  coreSpeed: 20
   trackLength: 5
   rawTiltX: 0
   rawTiltZ: 0
   rawCoreDepth: 0
   rawTrackDistance: 0
   isStationary: 0
+  solenoidZSpacing: 1.75
 --- !u!4 &1133492216
 Transform:
   m_ObjectHideFlags: 0
@@ -1403,20 +1424,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   core: {fileID: 1105913349}
   reverse: 0
-  tiltSpeed: 20
-  coreSpeed: 20
   isActive: 0
   tiltAngleX: 0
   tiltAngleZ: 0
   trackDistance: 0
+  fretHandPosition: 0
+  trackPosition: 0
+  fretTrackLength: 0
+  tiltSpeed: 20
   maxTiltX: 10
   maxTiltZ: 10
+  coreSpeed: 20
   trackLength: 5
   rawTiltX: 0
   rawTiltZ: 0
   rawCoreDepth: 0
   rawTrackDistance: 0
   isStationary: 0
+  solenoidZSpacing: 1.75
 --- !u!4 &1248972847
 Transform:
   m_ObjectHideFlags: 0
@@ -1952,20 +1977,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   core: {fileID: 382006057}
   reverse: 0
-  tiltSpeed: 20
-  coreSpeed: 20
   isActive: 0
   tiltAngleX: 0
   tiltAngleZ: 0
   trackDistance: 0
+  fretHandPosition: 0
+  trackPosition: 0
+  fretTrackLength: 0
+  tiltSpeed: 20
   maxTiltX: 10
   maxTiltZ: 10
+  coreSpeed: 20
   trackLength: 5
   rawTiltX: 0
   rawTiltZ: 0
   rawCoreDepth: 0
   rawTrackDistance: 0
   isStationary: 0
+  solenoidZSpacing: 1.75
 --- !u!4 &1554708315
 Transform:
   m_ObjectHideFlags: 0
@@ -2211,20 +2240,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   core: {fileID: 1327274399}
   reverse: 1
-  tiltSpeed: 20
-  coreSpeed: 20
   isActive: 0
   tiltAngleX: 0
   tiltAngleZ: 0
   trackDistance: 0
+  fretHandPosition: 0
+  trackPosition: 0
+  fretTrackLength: 0
+  tiltSpeed: 20
   maxTiltX: 10
   maxTiltZ: 10
+  coreSpeed: 20
   trackLength: 5
   rawTiltX: 0
   rawTiltZ: 0
   rawCoreDepth: 0
   rawTrackDistance: 0
   isStationary: 0
+  solenoidZSpacing: 1.75
 --- !u!4 &1769610251
 Transform:
   m_ObjectHideFlags: 0
