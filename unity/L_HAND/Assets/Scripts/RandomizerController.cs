@@ -26,7 +26,7 @@ public class RandomizerController : MonoBehaviour
             fretHand.SetTrackDistance(Random.Range(0f, fretHand.GetTrackLength()));
             List<SolenoidController> chosenSolenoids = new List<SolenoidController>();
 
-            while (chosenSolenoids.Length < 3)
+            while (chosenSolenoids.Count < 4)
             {
                 int randomIndex = Random.Range(0, solenoids.Length);
                 SolenoidController randomSolenoid = solenoids[randomIndex];
@@ -39,7 +39,7 @@ public class RandomizerController : MonoBehaviour
             {
                 if (fretHand.IsStationary()) {
 
-                    bool newActiveState = Random.value < 0.3f;
+                    bool newActiveState = Random.value < 0.4f;
                     float newTiltAngleX;
                     float newTiltAngleZ;
                     float newTrackDistance;
@@ -64,6 +64,12 @@ public class RandomizerController : MonoBehaviour
                 }
             }
             yield return new WaitForSeconds(Random.Range(1, 4)*0.25f);
+            foreach (SolenoidController solenoid in solenoids)
+            {
+                solenoid.SetActive(false);
+                solenoid.SetTiltAngleX(0f);
+                solenoid.SetTiltAngleZ(0f);
+            }
         }
     }
 }
