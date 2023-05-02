@@ -13,6 +13,7 @@ public class SolenoidController : MonoBehaviour
     
     [SerializeField] private int fretHandPosition;
     [SerializeField] private int trackPosition;
+    [SerializeField] private float encodedRepresentation;
     [SerializeField] private float fretTrackLength;
     [SerializeField] private float tiltSpeed = 100.0f; // The speed at which the core moves
     [SerializeField] private float maxTiltX = 10f;
@@ -69,7 +70,8 @@ public class SolenoidController : MonoBehaviour
         // Apply tilt angle to solenoid transform
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(tiltAngleX, 0f, tiltAngleZ), Time.deltaTime * tiltSpeed);
         
-        //trackPosition = GetTrackPosition();
+        trackPosition = GetTrackPosition();
+        if (isStationary) {encodedRepresentation = GetEncoded();}
 
         // Apply position change to solenoid (along track)
         // adjust for reverse position:
@@ -179,32 +181,46 @@ public class SolenoidController : MonoBehaviour
         return trackLength;
     }
 
-    public int GetEncodedTiltX()
+    public int GetDiscreteTiltX()
     {
-        return System.Convert.ToInt32(tiltAngleX / maxTiltX) + 2;
+        return System.Convert.ToInt32(tiltAngleX / maxTiltX);
     }
 
-    public int GetEncodedTiltZ()
+    public int GetDiscreteTiltZ()
     {
-        return System.Convert.ToInt32(tiltAngleZ / maxTiltZ) + 2;
+        return System.Convert.ToInt32(tiltAngleZ / maxTiltZ);
     }
 
-    public int GetEncodedTrackDistance()
+    public int GetTrackPosition(float distance = -1f)
     {
-        // return an integer between 0 and 9 quantifying the track distance in terms of track length
-        return System.Convert.ToInt32(trackDistance / trackLength * 10f);
-    }
+        /* If no distance is given, use the raw distance
+        if (distance == -1f) {distance = rawTrackDistance;}
 
-    public int GetTrackPosition()
-    {
+        // Loop through all the frets to see if the given distance is close enough to one of them
+        for (int i = 0; i < fretLengths.Length; i++)
+        {
+            // If the distance is within 0.1 units of the fret, then the fret is the closest match
+            if (((fretTrackLength + distance +) * fretLengths[i]) < 0.1f)
+            {
+                return i;
+            }
+        }
+
+        // If no fret is close enough, return -1
+        return -1; */
         return trackPosition;
+    }
+
+    public int GetEncoded()
+    {
+        return ((GetDiscreteTiltZ() + 2) * 10 + (GetTrackPosition()+1)) * (isActive? 1 : -1);
     }
 
     public void SetTrackPosition(int position)
     {
         trackPosition = position;
         if (reverse) {position = position * -1;}
-        SetTrackDistance(fretLengths[fretHandPosition + position] * fretTrackLength);
+        SetTrackDistance(Mathf.Abs(fretLengths[fretHandPosition + position] - fretLengths[fretHandPosition]) * fretTrackLength);
     }
 
     public bool IsStationary()

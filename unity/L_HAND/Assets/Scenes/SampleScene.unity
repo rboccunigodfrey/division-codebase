@@ -297,7 +297,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 216880323}
   m_LocalRotation: {x: -0, y: 0.67184335, z: -0, w: 0.7406933}
-  m_LocalPosition: {x: -6.88, y: -0.11, z: 0.35}
+  m_LocalPosition: {x: -55.8, y: -0.11, z: 18.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -341,6 +341,7 @@ MonoBehaviour:
   trackDistance: 0
   fretHandPosition: 0
   trackPosition: 0
+  encodedRepresentation: 0
   fretTrackLength: 0
   tiltSpeed: 20
   maxTiltX: 10
@@ -369,57 +370,6 @@ Transform:
   - {fileID: 902490351}
   m_Father: {fileID: 1076108182}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &352978195
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 352978197}
-  - component: {fileID: 352978196}
-  m_Layer: 0
-  m_Name: Randomizer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &352978196
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 352978195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 025a80e16ad73978798a62d407b93a85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  solenoid1: {fileID: 1769610250}
-  solenoid2: {fileID: 1133492215}
-  solenoid3: {fileID: 258946978}
-  solenoid4: {fileID: 496300391}
-  solenoid5: {fileID: 1248972846}
-  solenoid6: {fileID: 1554708314}
-  fretHand: {fileID: 1076108181}
---- !u!4 &352978197
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 352978195}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.5424728, y: 0.31917143, z: -0.06600857}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &382006057
 GameObject:
@@ -556,6 +506,7 @@ MonoBehaviour:
   trackDistance: 0
   fretHandPosition: 0
   trackPosition: 0
+  encodedRepresentation: 0
   fretTrackLength: 0
   tiltSpeed: 20
   maxTiltX: 10
@@ -1364,6 +1315,7 @@ MonoBehaviour:
   trackDistance: 0
   fretHandPosition: 0
   trackPosition: 0
+  encodedRepresentation: 0
   fretTrackLength: 0
   tiltSpeed: 20
   maxTiltX: 10
@@ -1392,6 +1344,57 @@ Transform:
   - {fileID: 892027421}
   m_Father: {fileID: 1076108182}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1162862946
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1162862948}
+  - component: {fileID: 1162862947}
+  m_Layer: 0
+  m_Name: Learner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1162862947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162862946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d33a3e8077c7d6b4bb4c40ad3ff41d09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  solenoid1: {fileID: 1769610250}
+  solenoid2: {fileID: 1133492215}
+  solenoid3: {fileID: 258946978}
+  solenoid4: {fileID: 496300391}
+  solenoid5: {fileID: 1248972846}
+  solenoid6: {fileID: 1554708314}
+  fretHand: {fileID: 1076108181}
+--- !u!4 &1162862948
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1162862946}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.9566555, y: 4.215822, z: -1.5130558}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1248972845
 GameObject:
@@ -1430,6 +1433,7 @@ MonoBehaviour:
   trackDistance: 0
   fretHandPosition: 0
   trackPosition: 0
+  encodedRepresentation: 0
   fretTrackLength: 0
   tiltSpeed: 20
   maxTiltX: 10
@@ -1983,6 +1987,7 @@ MonoBehaviour:
   trackDistance: 0
   fretHandPosition: 0
   trackPosition: 0
+  encodedRepresentation: 0
   fretTrackLength: 0
   tiltSpeed: 20
   maxTiltX: 10
@@ -2246,6 +2251,7 @@ MonoBehaviour:
   trackDistance: 0
   fretHandPosition: 0
   trackPosition: 0
+  encodedRepresentation: 0
   fretTrackLength: 0
   tiltSpeed: 20
   maxTiltX: 10

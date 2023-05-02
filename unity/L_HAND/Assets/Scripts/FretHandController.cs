@@ -67,15 +67,14 @@ public class FretHandController : MonoBehaviour
 
         // setup solenoid matrix
 
-        int rowLength = 3; // number of objects in each row
         Vector3 startPosition = transform.position; // starting position for placing objects
         int index = 0; // current index in objectsToPlace array
 
         // iterate through each row
-        for (int row = 0; row < solenoids.Length / rowLength; row++)
+        for (int row = 0; row < solenoids.Length / 3; row++)
         {
             // iterate through each column in the row
-            for (int col = 0; col < rowLength; col++)
+            for (int col = 0; col < 3; col++)
             {
                 // calculate the position for the current object
                 Vector3 position = new Vector3(
@@ -102,6 +101,7 @@ public class FretHandController : MonoBehaviour
 
         allSolenoidsRetracted = true;
         allSolenoidsStationary = true;
+        
         foreach (SolenoidController solenoid in solenoids) 
         {
             solenoid.UpdateHandPosition(trackPosition);
@@ -133,6 +133,7 @@ public class FretHandController : MonoBehaviour
         
         if (allSolenoidsRetracted)
         {
+            trackPosition = GetTrackPosition();
             float newZ = Mathf.Lerp(transform.localPosition.z, trackDistance, Time.deltaTime * travelSpeed);
             transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, newZ);
         }
@@ -142,12 +143,13 @@ public class FretHandController : MonoBehaviour
         if (!allSolenoidsRetracted) {isStationary = true;}
         if (isStationary) {
             currentPositionMatrix = GetCurrentPositionMatrix();
-            trackPosition = GetTrackPosition();
+            trackDistance = rawTrackDistance;
         }
 
-        // calculate solenoid track length that varies with track position
-        solenoidTrackLength = (fretLengths[trackPosition+3] - fretLengths[trackPosition]) * trackLength;
-        solenoidTrackReverseLength = (fretLengths[trackPosition] - fretLengths[trackPosition-3]) * trackLength;
+        // calculate solenoid track length/spacing that varies with track position
+        solenoidTrackLength = (fretLengths[trackPosition+2] - fretLengths[trackPosition]) * trackLength;
+        solenoidTrackReverseLength = (fretLengths[trackPosition-1] - fretLengths[trackPosition-2]) * trackLength;
+        solenoidZSpacing = (fretLengths[trackPosition] - fretLengths[trackPosition-1]) * trackLength;
     }
 
     public float[,] GetCurrentPositionMatrix()
@@ -160,7 +162,7 @@ public class FretHandController : MonoBehaviour
             int row = i / 2;
             int col = i % 2;
             // set the current position matrix value to the integer of the current solenoid's encoded xtilt, ztilt, and trackposition as 100ths, 10ths, and 1's place, respectively
-            positionMatrix[row, col] = solenoids[i].GetEncodedTiltX()*100 + solenoids[i].GetEncodedTiltZ()*10 + solenoids[i].GetTrackPosition();
+            positionMatrix[row, col] = solenoids[i].GetEncoded();
         }
         return positionMatrix;
     }
