@@ -60,50 +60,64 @@ print(generate_chord(
     include_position=True,
     note_count=random.randrange(2, 5)))
 
+import sklearn as sk
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.multioutput import MultiOutputRegressor
+
+POPULATION = 100
+NOTES_PER = 100
+
+def post_process_duration(y_pred):
+    # Round duration to the nearest multiple of 0.125
+    y_pred[:] = np.round(y_pred[:] / 0.125) * 0.125
+
+    return y_pred
+
+def post_process_velocity(y_pred):
+    # Clip velocity to the range 1-127
+    y_pred[:] = np.clip(np.round(y_pred[:]), 1, 127)
+    
+    return y_pred
+
+def preprocess_input(X):
+    # Convert chords to binary
+    X = np.array([[''.join([bin(x)[2:].zfill(6) for x in row]) for row in level] for level in (X + 1)])
+    
+    return X
+
+# toy dataset
+# chordsX = [[chord, position]...]
+# chordsY = [[duration, velocity]...]
+rand_chords_x = np.array([[generate_chord(position=i%12, note_count=(random.randrange(1, 5)), include_position=True) for i in range(NOTES_PER)] for _ in range(POPULATION)])
+print(rand_chords_x)
+
+rand_chords_x_flat = preprocess_input(rand_chords_x)
+print(rand_chords_x_flat)
+
+rand_durations = np.array([[round(random.random()/0.125)*0.125 for _ in range(NOTES_PER)] for _ in range(POPULATION)])
+rand_velocities = np.array([[random.randrange(50, 127) for _ in range(NOTES_PER)] for _ in range(POPULATION)])
+# chordsYFlat = np.reshape(chordsY, (12, 20))
+print(rand_durations)
+print(rand_velocities)
+
+
+durRegr = RandomForestRegressor(n_estimators=100)
+durRegr.fit(rand_chords_x_flat, rand_durations)
+velRegr = RandomForestRegressor(n_estimators=100)
+velRegr.fit(rand_chords_x_flat, rand_velocities)
+
+X_test = np.array([[generate_chord(position=i%12, note_count=(random.randrange(1, 5)), include_position=True) for i in range(NOTES_PER)] for _ in range(POPULATION)])
+print(preprocess_input(X_test))
+print(post_process_duration(durRegr.predict(preprocess_input(X_test))))
+print(post_process_velocity(velRegr.predict(preprocess_input(X_test))))
+
+
+# print(post_process_output(regr.predict()))
+
 '''
 
-# Constants
-NUM_INDIVIDUALS = 100
-NUM_GENERATIONS = 50
-MUTATION_PROB = 0.2
-CROSSOVER_PROB = 0.5
+TODO: IDEAS
 
-def midi_to_solenoid(chord_pattern):
-    # Convert MIDI chord pattern to solenoid instructions
-    # This function should be implemented to convert the given chord pattern
-    # to a list of solenoid instructions in the form of (SActions, value) tuples
-    pass
-
-def fitness_function(individual):
-    # Evaluate the fitness of an individual
-    # This function should be implemented to return a numerical score
-    # representing how well the individual performs in converting
-    # MIDI chord patterns to solenoid instructions
-
-    pass
-
-creator.create("FitnessMax", base.Fitness, weights=(1.0,))
-creator.create("Individual", list, fitness=creator.FitnessMax)
-
-toolbox = base.Toolbox()
-toolbox.register("solenoid_instruction", midi_to_solenoid, chord_pattern=None)
-toolbox.register("individual", tools.initRepeat, creator.Individual,
-                 toolbox.solenoid_instruction, n=1)
-toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-
-toolbox.register("evaluate", fitness_function)
-toolbox.register("mate", tools.cxTwoPoint)
-toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=MUTATION_PROB)
-toolbox.register("select", tools.selTournament, tournsize=3)
-
-population = toolbox.population(n=NUM_INDIVIDUALS)
-
-# Run the genetic algorithm
-result, _ = algorithms.eaSimple(population, toolbox,
-                                cxpb=CROSSOVER_PROB, mutpb=MUTATION_PROB,
-                                ngen=NUM_GENERATIONS, verbose=True)
-
-best_individual = tools.selBest(result, k=1)[0]
-print("Best individual:", best_individual)
+- Train an ML algorithm on a dataset of chords arrays (like above) and their corresponding duration and velocity
 
 '''
