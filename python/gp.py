@@ -1,7 +1,7 @@
 import random
-import numpy as np
-from deap import base, creator, tools, algorithms
 from enum import Enum
+
+import numpy as np
 
 NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
@@ -33,7 +33,7 @@ PATTERNS_C_IONIAN = [
 
 def get_pattern(key, scale=Scales.IONIAN):
     toIndex = (len(NOTES) - NOTES.index(key)) + scale.value
-    if (toIndex >= len(PATTERNS_C_IONIAN)):
+    if toIndex >= len(PATTERNS_C_IONIAN):
         toIndex = toIndex - len(PATTERNS_C_IONIAN)
 
     return PATTERNS_C_IONIAN[toIndex:] + PATTERNS_C_IONIAN[:toIndex]
@@ -68,9 +68,7 @@ print(generate_chord(
     include_position=True,
     note_count=random.randrange(2, 5)))
 
-import sklearn as sk
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.multioutput import MultiOutputRegressor
 
 POPULATION = 100
 NOTES_PER = 100

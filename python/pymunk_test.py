@@ -1,8 +1,7 @@
-import pymunk
+import sys
+
 import pygame
 import pymunk.pygame_util
-import sys 
-
 
 pygame.init()
 
@@ -18,7 +17,7 @@ sols = []
 
 for i in range(6):
     sol_fixt_body = pymunk.Body(body_type=pymunk.Body.STATIC)
-    sol_fixt_body.position = (150 + 150*(i%3), 150 + 150*(int(i/3)))
+    sol_fixt_body.position = (150 + 150 * (i % 3), 150 + 150 * (int(i / 3)))
     sol_body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
     sol_body.position = sol_fixt_body.position
     sol_shape = pymunk.Poly.create_box(sol_body, (100, 170))
@@ -34,9 +33,9 @@ while True:
             sys.exit(0)
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
             pygame.image.save(screen, "screencaps/l_hand_sim.png")
-                
-    space.step(1/fps)
-    screen.fill(((255, 255, 255)))
+
+    space.step(1 / fps)
+    screen.fill((255, 255, 255))
     space.debug_draw(draw_options)
 
     pygame.display.flip()
