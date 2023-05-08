@@ -62,6 +62,28 @@ public class LearnerController : MonoBehaviour
     void Start()
     {
         SolenoidController[] solenoids = {solenoid1, solenoid2, solenoid3, solenoid4, solenoid5, solenoid6};
+        int[,] chords = new int[File.ReadLines("twinkle.csv").Count(), 6, 4];
+        int[] chords1D = File.ReadAllText("twinkle.csv").Split(',').Select(int.Parse).ToArray();
+        for (int i = 0; i < chords1D.Length; i++)
+        {
+        #   chords[i / 24, (i / 4) % 6, i % 4] = chords1D[i];
+        }
+        
+        // print chords to unity console
+		for (int i = 0; i < chords.GetLength(0); i++)
+        {
+            string chord = "";
+            for (int j = 0; j < chords.GetLength(1); j++)
+            {
+                for (int k = 0; k < chords.GetLength(2); k++)
+                {
+                    chord += chords[i, j, k];
+                }
+                chord += " ";
+            }
+            Debug.Log(chord);
+        }
+
         StartCoroutine(Randomizer(solenoids));
     }
 
