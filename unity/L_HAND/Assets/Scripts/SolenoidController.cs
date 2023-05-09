@@ -227,4 +227,14 @@ public class SolenoidController : MonoBehaviour
     {
         return isStationary;
     }
+
+    public bool IsActive()
+    {
+        return isActive;
+    }
+
+    public bool IsReverse()
+    {
+        return reverse;
+    }
 }
