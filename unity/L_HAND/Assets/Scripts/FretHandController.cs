@@ -179,6 +179,11 @@ public class FretHandController : MonoBehaviour
         }
         return -1;
     }
+    
+    public bool AllSolenoidsRetracted()
+    {
+        return allSolenoidsRetracted;
+    }
 
     public void SetTrackPosition(int position) {
         SetTrackDistance(fretLengths[position] * trackLength);

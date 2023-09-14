@@ -14,6 +14,8 @@ public enum SActions {
 
 public enum FHActions { 
     TrackPosition,
+    Fretting,
+    Moving
 }
 
 static class SActionsMethods 
@@ -84,7 +86,11 @@ static class FHActionsMethods
         switch(action) 
         {
             case FHActions.TrackPosition:
-                return fretHand.GetTrackPosition();        
+                return fretHand.GetTrackPosition();     
+            case FHActions.Fretting:
+				return (fretHand.AllSolenoidsRetracted()) ? 0 : 1;
+            case FHActions.Moving:
+	            return fretHand.IsStationary() ? 0 : 1;
 			default:
                 throw new System.ArgumentException(
 "Invalid frethand getter action");
@@ -95,7 +101,7 @@ static class FHActionsMethods
         switch(action) 
         {
             case FHActions.TrackPosition:
-				if (value < 3 || value > 19) {
+				if (value < 2 || value > 20) {
 					throw new System.ArgumentException(
 "Invalid frethand track position (must be between 3 and 19, entered " + value + ")");
 				}
@@ -128,20 +134,28 @@ public class LearnerController : MonoBehaviour
 		// Read all lines from the CSV file and split them by comma
 		string[][] csvData = File.ReadAllLines(path).Select(line => line.Split(',')).ToArray();
 		
-		int x = csvData.Length, y = 6,  z = 4; // Set the dimensions of your array
+		int x = csvData.Length, y = 5,  z = 6; // Set the dimensions of your array
 
 		// Initialize the final array with the desired dimensions: (x, y, z)
 		int[,,] chords = new int[x, y, z];
 
 		// Iterate through the CSV data and populate the final array
+		for (int i = 0; i < x; i++)
+		{
+			for (int j = 0; j < y; j++)
+			{
+			    for (int k = 0; k < z; k++)
+				{
+					chords[i, j, k] = int.Parse(csvData[i][j * z + k]);
+				}
+		    }
+		}
+		
+		
 		HashSet<int> keyframes_set = new HashSet<int>();
 		for (int i = 0; i < x; i++)
 		{
-			for (int j = 0; j < z * y; j++)
-			{	
-        		chords[i, j / z, j % z] = int.Parse(csvData[i][j]);
-				keyframes_set.Add(chords[i, j / z, 3]);
-    		}
+			keyframes_set.Add(chords[i, 0, 1]);
 		}
 		int[] keyframes = keyframes_set.ToArray();
 
@@ -184,51 +198,41 @@ public class LearnerController : MonoBehaviour
 
     IEnumerator Player(SolenoidController[] solenoids, int[,,] chords, int[] keyframes)
 	{
-		int notesPlayed = 0;
+		int chordsPlayed = 0;
 		int ticks = 0;
-		int fhPosition = 3;
-        while (notesPlayed < chords.Length) 
+
+		while (chordsPlayed < chords.Length) 
         {
 			Debug.Log("ticks: " + ticks);
-			fhPosition = FHActions.TrackPosition.GetFor(fretHand);
+			Debug.Log("get frethand position: " + FHActions.TrackPosition.GetFor(fretHand));
+			if (FHActions.)
 			for (int i = 0; i < keyframes.Length; i++)
             {
                 if (keyframes[i] == ticks)
                 {
-					HashSet<int> sPositions = new HashSet<int>();
-					for (int j = 0; j < 6; j++)
-					{
-						if (SActions.Reverse.GetFor(solenoids[j]) == 0)
-                    	{
-							Debug.Log("reverse");
-                  	 	}
-						int curSolPos = SActions.TrackPosition.GetFor(solenoids[j]);
-						if (chords[i, j, 0] == -1)
-						{
-                            SActions.Activation.SetFor(solenoids[j], 0);
-                        } else
-						{
-							sPositions.Add(chords[i, j, 0]);
-							if (chords[i, j, 2] == chords[i, j, 3]) {
-								Debug.Log("fhpos: " + fhPosition);
-								Debug.Log("spos: " + chords[i, j, 0]);
-                    			SActions.TrackPosition.SetFor(solenoids[j], chords[i, j, 0] - fhPosition + 2);
-								SActions.Activation.SetFor(solenoids[j], 1);
-							}
-						}
-					}
-					int sPosAvg = System.Convert.ToInt32(Queryable.Average(sPositions.AsQueryable()));
-					int sPosMin = sPositions.Min(pos => pos < 0 ? 1000 : pos);
-					Debug.Log("avgspos: " + sPosAvg);
-					Debug.Log("minspos: " + sPosMin);
-					FHActions.TrackPosition.SetFor(fretHand, sPosMin + 2);
+	                if (chords[i, 0, 0] != -1)
+	                {
+		                FHActions.TrackPosition.SetFor(fretHand, chords[i, 0, 0]);
+		                Debug.Log("set frethand position: " + chords[i, 0, 0]);
+
+		                for (int j = 0; j < 6; j++)
+		                {
+			                if (chords[i, 1, j] > 0)
+			                {
+				                SActions.Activation.SetFor(solenoids[j], chords[i, 1, j] > 0 ? 1 : 0);
+				                SActions.TrackPosition.SetFor(solenoids[j], chords[i, 1, j]);
+			                }
+
+			                SActions.TiltX.SetFor(solenoids[j], chords[i, 2, j]);
+		                }
+	                }
+	                chordsPlayed ++;
                 }
-				notesPlayed ++;
             }
+
 			ticks ++;
-			Debug.Log(ticks);
-				
-			yield return new WaitForSeconds(0.1f);
+
+			yield return new WaitForSeconds(0f);
         }	
 	}
 

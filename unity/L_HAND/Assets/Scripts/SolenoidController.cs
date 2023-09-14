@@ -193,22 +193,17 @@ public class SolenoidController : MonoBehaviour
 
     public int GetTrackPosition(float distance = -1f)
     {
-        /* If no distance is given, use the raw distance
         if (distance == -1f) {distance = rawTrackDistance;}
-
-        // Loop through all the frets to see if the given distance is close enough to one of them
         for (int i = 0; i < fretLengths.Length; i++)
         {
-            // If the distance is within 0.1 units of the fret, then the fret is the closest match
-            if (((fretTrackLength + distance +) * fretLengths[i]) < 0.1f)
+            if ((distance - fretLengths[i] * trackLength) < 0.1f)
             {
                 return i;
             }
         }
-
-        // If no fret is close enough, return -1
-        return -1; */
-        return trackPosition;
+        return -1;
+        
+        // return trackPosition;
     }
 
     public int GetEncoded()
